@@ -92,5 +92,6 @@
   "speedup": 1.401,
   "elapsed_s": 76.7,
   "handle": "nullptr",
-  "note": "dense, threaded (format unchanged)"
+  "note": "dense, threaded (format unchanged)",
+  "owner": "zdebruine"
 }

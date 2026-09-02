@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+#
+# hpcbench-submit -- run the whole field on this machine and post the result.
+#
+#   ./hpcbench-submit --task p1-kernel --owner YOUR_HANDLE \
+#       --label "ThinkPad X1" --kind laptop
+#
+# What it does, in order:
+#   1. clones or updates the course repository next to itself
+#   2. rebuilds the corpus from the packed matrix (296 MB, never in git)
+#   3. collects every submission, including the shipped baseline
+#   4. runs them all and measures each one
+#   5. posts the bundle to hpcbench, authenticated by your API token
+#
+# Nothing here needs root, and nothing outside the Python standard library.
+# CMake is optional -- each submission's build.sh falls back to a direct
+# compiler call.
+#
+# Your API token comes from the Settings page. Put it in the environment:
+#   export HPCBENCH_TOKEN=hb_...
+# It is sent as a bearer token over HTTPS and is never written to disk here.
+
+set -euo pipefail
+
+REPO_URL="${HPCBENCH_REPO_URL:-https://github.com/zdebruine/cis677-hpcbench.git}"
+API="${HPCBENCH_API:-}"
+TASK=""; OWNER="${HPCBENCH_OWNER:-}"; LABEL=""; KIND="unknown"
+RUNS=""; WARMUP=""; DRY=0
+
+usage() { sed -n '2,26p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --task)   TASK="$2"; shift 2 ;;
+    --owner)  OWNER="$2"; shift 2 ;;
+    --label)  LABEL="$2"; shift 2 ;;
+    --kind)   KIND="$2"; shift 2 ;;
+    --runs)   RUNS="$2"; shift 2 ;;
+    --warmup) WARMUP="$2"; shift 2 ;;
+    --api)    API="$2"; shift 2 ;;
+    --dry-run) DRY=1; shift ;;
+    -h|--help) usage 0 ;;
+    *) echo "unknown option: $1" >&2; usage 1 ;;
+  esac
+done
+
+[ -n "$TASK" ]  || { echo "--task is required (e.g. p1-kernel)" >&2; exit 2; }
+[ -n "$OWNER" ] || { echo "--owner is required. Every result belongs to somebody;
+an unowned run cannot be ranked, disputed, or removed on request." >&2; exit 2; }
+
+need() { command -v "$1" >/dev/null 2>&1 || { echo "missing required tool: $1" >&2; exit 3; }; }
+need git; need python3; need c++
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$HERE/cis677-hpcbench"
+if [ -d "$ROOT/.git" ]; then
+  echo "==> updating $ROOT"
+  git -C "$ROOT" pull --ff-only --quiet || echo "    (pull skipped; using the local copy)"
+elif [ -f "$HERE/../tasks/$TASK/task.yaml" ]; then
+  ROOT="$(cd "$HERE/.." && pwd)"          # already inside a checkout
+  echo "==> using the checkout at $ROOT"
+else
+  echo "==> cloning $REPO_URL"
+  git clone --depth 1 --quiet "$REPO_URL" "$ROOT"
+fi
+cd "$ROOT"
+
+INPUT="data/$TASK/public.bin"
+if [ ! -f "$INPUT" ]; then
+  echo "==> rebuilding the corpus (a few hundred MB, deterministic, once)"
+  python3 tools/make_p1_input.py --variant public --out "$INPUT"
+fi
+
+echo "==> collecting submissions"
+rm -rf submissions && mkdir -p submissions
+cp -r "baselines/$TASK" submissions/baseline
+for d in examples/*/; do
+  n="$(basename "$d")"
+  case "$n" in "$TASK"*|p1-*) cp -r "$d" "submissions/${n#p1-}" ;; esac
+done
+rm -rf submissions/*/build submissions/*/work
+echo "    $(ls submissions | tr '\n' ' ')"
+
+EXTRA=""
+[ -n "$RUNS" ]   && EXTRA="$EXTRA --runs $RUNS"
+[ -n "$WARMUP" ] && EXTRA="$EXTRA --warmup $WARMUP"
+[ -n "$LABEL" ]  && EXTRA="$EXTRA --device-label $(printf '%q' "$LABEL")"
+
+echo "==> running (this takes a few minutes; do not use the machine meanwhile)"
+# shellcheck disable=SC2086
+eval python3 -m hpcbench.device \
+  --task "tasks/$TASK/task.yaml" \
+  --submissions submissions \
+  --input-path "$INPUT" \
+  --owner "$OWNER" \
+  --device-kind "$KIND" \
+  --out results/devices $EXTRA
+
+BUNDLE="$(ls -t results/devices/"$TASK"/*/*.json | head -1)"
+echo "==> bundle: $BUNDLE"
+
+if [ "$DRY" = "1" ]; then
+  echo "--dry-run: not posting. Inspect the bundle above."
+  exit 0
+fi
+if [ -z "$API" ]; then
+  echo
+  echo "No --api endpoint set, so nothing was posted."
+  echo "Set HPCBENCH_API to your hpcbench instance, or attach the bundle by hand."
+  exit 0
+fi
+if [ -z "${HPCBENCH_TOKEN:-}" ]; then
+  echo
+  echo "HPCBENCH_TOKEN is not set. Copy your token from the Settings page:"
+  echo "    export HPCBENCH_TOKEN=hb_..."
+  exit 4
+fi
+
+echo "==> posting to $API/ingest"
+code=$(curl -sS -o /tmp/hpcbench-ingest.out -w '%{http_code}' \
+  -X POST "$API/ingest" \
+  -H "Authorization: Bearer $HPCBENCH_TOKEN" \
+  -H 'Content-Type: application/json' \
+  --data-binary @"$BUNDLE")
+echo "    HTTP $code"
+cat /tmp/hpcbench-ingest.out; echo
+[ "$code" = "200" ] || [ "$code" = "201" ] || exit 5
+echo "==> done. Your device is on the board."

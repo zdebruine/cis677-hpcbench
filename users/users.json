@@ -1,0 +1,24 @@
+{
+  "_comment": [
+    "The roster. Every submission and every device bundle must name an owner",
+    "that appears here, and CI rejects the ones that do not.",
+    "",
+    "A static site cannot authorise anybody: GitHub Pages serves files and has",
+    "no server to check a password against. So identity here is a GitHub",
+    "account, ownership is asserted in the bundle, and the check that actually",
+    "bites happens in CI, where the commit author is compared against the",
+    "declared owner. The 'sign in' control on the site is display",
+    "personalisation only and is labelled as such."
+  ],
+  "admin_email": "zacharydebruine@gmail.com",
+  "users": {
+    "zdebruine": {
+      "handle": "zdebruine",
+      "display_name": "Zach DeBruine",
+      "github": "zdebruine",
+      "email": "zacharydebruine@gmail.com",
+      "role": "admin",
+      "joined": "2026-09-02"
+    }
+  }
+}

@@ -92,5 +92,6 @@
   "speedup": 10.18,
   "elapsed_s": 14.6,
   "handle": "bitshift",
-  "note": "CSR, single-threaded"
+  "note": "CSR, single-threaded",
+  "owner": "zdebruine"
 }

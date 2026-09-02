@@ -92,5 +92,6 @@
   "speedup": 14.616,
   "elapsed_s": 8.2,
   "handle": "cachelinehero",
-  "note": "CSR + int32 idx + fp32 vals + dynamic OMP"
+  "note": "CSR + int32 idx + fp32 vals + dynamic OMP",
+  "owner": "zdebruine"
 }

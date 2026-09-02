@@ -92,5 +92,6 @@
   "speedup": 1.005,
   "elapsed_s": 117.0,
   "handle": "straightloop",
-  "note": "shipped baseline, unmodified"
+  "note": "shipped baseline, unmodified",
+  "owner": "zdebruine"
 }

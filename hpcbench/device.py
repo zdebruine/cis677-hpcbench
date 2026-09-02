@@ -162,8 +162,17 @@ def _discover(subs_dir: str) -> list[tuple[str, str]]:
     return out
 
 
+def load_roster(path: str = "users/users.json") -> dict:
+    try:
+        with open(path) as f:
+            return json.load(f).get("users", {})
+    except (OSError, ValueError):
+        return {}
+
+
 def run_device(task: Task, subs: list[tuple[str, str]], *, input_path: str,
-               device: dict, quick: bool = False, tier: str = "device") -> dict:
+               device: dict, owner: str, quick: bool = False,
+               tier: str = "device") -> dict:
     """Run every submission here and report each one's speedup over the baseline.
 
     The baseline is run first and is not optional. Without it the bundle has no
@@ -214,6 +223,7 @@ def run_device(task: Task, subs: list[tuple[str, str]], *, input_path: str,
 
     return {
         "schema": SCHEMA,
+        "owner": owner,
         "task": task.id,
         "tier": tier,
         "input": os.path.basename(input_path),
@@ -241,6 +251,10 @@ def main(argv=None) -> int:
     ap.add_argument("--device-kind", default="unknown",
                     choices=["laptop", "desktop", "workstation", "hpc",
                              "vm", "browser", "unknown"])
+    ap.add_argument("--owner", default=os.environ.get("HPCBENCH_OWNER"),
+                    help="the handle this run belongs to; must be on the roster "
+                         "in users/users.json. Every result has an owner.")
+    ap.add_argument("--roster", default="users/users.json")
     ap.add_argument("--out", default="results/devices")
     ap.add_argument("--quick", action="store_true",
                     help="3 runs after 1 warmup instead of the task's settings")
@@ -249,6 +263,19 @@ def main(argv=None) -> int:
     ap.add_argument("--warmup", type=int, default=None,
                     help="override the warmup count (recorded in the bundle)")
     a = ap.parse_args(argv)
+
+    roster = load_roster(a.roster)
+    if not a.owner:
+        raise SystemExit(
+            "--owner is required. Every result on the board belongs to somebody;\n"
+            "an unowned run cannot be ranked, disputed, or removed on request.\n"
+            "Use the handle you registered, or set HPCBENCH_OWNER.")
+    if roster and a.owner not in roster:
+        known = ", ".join(sorted(roster)) or "(roster empty)"
+        raise SystemExit(
+            f"'{a.owner}' is not on the roster in {a.roster}.\n"
+            f"Known handles: {known}\n"
+            f"Open a pull request adding yourself to users/users.json.")
 
     task = Task.load(a.task)
     subs = _discover(a.submissions)
@@ -274,8 +301,9 @@ def main(argv=None) -> int:
     print(f"  isa: {', '.join(dev['isa']) or 'n/a'}", file=sys.stderr)
     print(f"running {len(subs)} submissions on {task.id}", file=sys.stderr)
 
+    dev["owner"] = a.owner
     bundle = run_device(task, subs, input_path=os.path.abspath(a.input_path),
-                        device=dev, quick=a.quick)
+                        device=dev, owner=a.owner, quick=a.quick)
 
     stamp = bundle["measured_at"].replace(":", "").replace("-", "")
     out_dir = os.path.join(a.out, task.id, dev["id"])

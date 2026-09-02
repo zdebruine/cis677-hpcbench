@@ -26,7 +26,8 @@
       "fma",
       "sse4_2"
     ],
-    "compiler": "c++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+    "compiler": "c++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+    "owner": "zdebruine"
   },
   "entries": [
     {
@@ -233,5 +234,6 @@
       },
       "speedup": 1.0751
     }
-  ]
+  ],
+  "owner": "zdebruine"
 }
