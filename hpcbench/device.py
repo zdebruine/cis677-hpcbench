@@ -244,6 +244,10 @@ def main(argv=None) -> int:
     ap.add_argument("--out", default="results/devices")
     ap.add_argument("--quick", action="store_true",
                     help="3 runs after 1 warmup instead of the task's settings")
+    ap.add_argument("--runs", type=int, default=None,
+                    help="override the repetition count (recorded in the bundle)")
+    ap.add_argument("--warmup", type=int, default=None,
+                    help="override the warmup count (recorded in the bundle)")
     a = ap.parse_args(argv)
 
     task = Task.load(a.task)
@@ -257,6 +261,11 @@ def main(argv=None) -> int:
         subs = _discover(a.submissions)
     # Baseline first: it is the scale everything else is reported against.
     subs.sort(key=lambda t: (t[0] != BASELINE_HANDLE, t[0]))
+
+    if a.runs is not None:
+        task.runs = a.runs
+    if a.warmup is not None:
+        task.warmup = a.warmup
 
     dev = fingerprint(a.device_label, a.device_kind)
     print(f"device {dev['id']}  {dev['label']}", file=sys.stderr)

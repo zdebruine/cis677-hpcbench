@@ -1,0 +1,237 @@
+{
+  "schema": "hpcbench/device-run/1",
+  "task": "p1-kernel",
+  "tier": "device",
+  "input": "public.bin",
+  "measured_at": "2026-09-02T13:20:45+00:00",
+  "runs": 2,
+  "warmup": 1,
+  "threads": 4,
+  "device": {
+    "id": "35aac794b443",
+    "label": "Zach laptop / i7-1185G7 (1c/2t sandbox)",
+    "kind": "laptop",
+    "runner": "native",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz",
+    "cores_physical": 1,
+    "cores_logical": 2,
+    "arch": "x86_64",
+    "memory_gb": 3.8,
+    "os": "Linux 6.8.0-136-generic",
+    "isa": [
+      "avx",
+      "avx2",
+      "avx512f",
+      "avx512vl",
+      "fma",
+      "sse4_2"
+    ],
+    "compiler": "c++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0"
+  },
+  "entries": [
+    {
+      "handle": "baseline",
+      "commit": "49992c2",
+      "status": "ok",
+      "error": null,
+      "checksum_ok": true,
+      "per_sweep": {
+        "8": {
+          "median_ms": 218.278,
+          "iqr_ms": 0.308,
+          "peak_rss_mb": 286.5
+        },
+        "16": {
+          "median_ms": 288.93,
+          "iqr_ms": 0.763,
+          "peak_rss_mb": 287.62
+        },
+        "32": {
+          "median_ms": 390.126,
+          "iqr_ms": 18.06,
+          "peak_rss_mb": 289.62
+        },
+        "64": {
+          "median_ms": 668.788,
+          "iqr_ms": 38.233,
+          "peak_rss_mb": 293.62
+        },
+        "128": {
+          "median_ms": 2266.484,
+          "iqr_ms": 6.711,
+          "peak_rss_mb": 301.62
+        },
+        "256": {
+          "median_ms": 4788.175,
+          "iqr_ms": 185.165,
+          "peak_rss_mb": 317.62
+        }
+      },
+      "peak_rss_mb": 317.62,
+      "cpu_efficiency": 0.25,
+      "elapsed_s": 37.5,
+      "speedup_by_sweep": {
+        "8": 1.0,
+        "16": 1.0,
+        "32": 1.0,
+        "64": 1.0,
+        "128": 1.0,
+        "256": 1.0
+      },
+      "speedup": 1.0
+    },
+    {
+      "handle": "bitshift",
+      "commit": "49992c2",
+      "status": "ok",
+      "error": null,
+      "checksum_ok": true,
+      "per_sweep": {
+        "8": {
+          "median_ms": 18.249,
+          "iqr_ms": 0.378,
+          "peak_rss_mb": 50.62
+        },
+        "16": {
+          "median_ms": 23.797,
+          "iqr_ms": 0.39,
+          "peak_rss_mb": 50.62
+        },
+        "32": {
+          "median_ms": 37.937,
+          "iqr_ms": 0.506,
+          "peak_rss_mb": 50.62
+        },
+        "64": {
+          "median_ms": 69.513,
+          "iqr_ms": 0.264,
+          "peak_rss_mb": 50.62
+        },
+        "128": {
+          "median_ms": 150.828,
+          "iqr_ms": 2.667,
+          "peak_rss_mb": 50.62
+        },
+        "256": {
+          "median_ms": 313.754,
+          "iqr_ms": 4.83,
+          "peak_rss_mb": 52.5
+        }
+      },
+      "peak_rss_mb": 52.5,
+      "cpu_efficiency": 0.2497,
+      "elapsed_s": 4.9,
+      "speedup_by_sweep": {
+        "8": 11.9611,
+        "16": 12.1414,
+        "32": 10.2835,
+        "64": 9.621,
+        "128": 15.0269,
+        "256": 15.2609
+      },
+      "speedup": 12.1986
+    },
+    {
+      "handle": "cachelinehero",
+      "commit": "49992c2",
+      "status": "ok",
+      "error": null,
+      "checksum_ok": true,
+      "per_sweep": {
+        "8": {
+          "median_ms": 15.455,
+          "iqr_ms": 0.043,
+          "peak_rss_mb": 50.62
+        },
+        "16": {
+          "median_ms": 21.47,
+          "iqr_ms": 0.28,
+          "peak_rss_mb": 50.62
+        },
+        "32": {
+          "median_ms": 33.091,
+          "iqr_ms": 1.003,
+          "peak_rss_mb": 50.62
+        },
+        "64": {
+          "median_ms": 58.896,
+          "iqr_ms": 2.563,
+          "peak_rss_mb": 50.62
+        },
+        "128": {
+          "median_ms": 119.638,
+          "iqr_ms": 12.332,
+          "peak_rss_mb": 50.62
+        },
+        "256": {
+          "median_ms": 213.574,
+          "iqr_ms": 6.743,
+          "peak_rss_mb": 53.12
+        }
+      },
+      "peak_rss_mb": 53.12,
+      "cpu_efficiency": 0.4425,
+      "elapsed_s": 4.3,
+      "speedup_by_sweep": {
+        "8": 14.1235,
+        "16": 13.4574,
+        "32": 11.7895,
+        "64": 11.3554,
+        "128": 18.9445,
+        "256": 22.4193
+      },
+      "speedup": 14.8691
+    },
+    {
+      "handle": "nullptr",
+      "commit": "49992c2",
+      "status": "ok",
+      "error": null,
+      "checksum_ok": true,
+      "per_sweep": {
+        "8": {
+          "median_ms": 230.928,
+          "iqr_ms": 5.073,
+          "peak_rss_mb": 287.25
+        },
+        "16": {
+          "median_ms": 305.803,
+          "iqr_ms": 0.968,
+          "peak_rss_mb": 288.25
+        },
+        "32": {
+          "median_ms": 446.094,
+          "iqr_ms": 10.338,
+          "peak_rss_mb": 290.25
+        },
+        "64": {
+          "median_ms": 732.507,
+          "iqr_ms": 3.867,
+          "peak_rss_mb": 294.25
+        },
+        "128": {
+          "median_ms": 1599.225,
+          "iqr_ms": 14.256,
+          "peak_rss_mb": 302.25
+        },
+        "256": {
+          "median_ms": 3134.055,
+          "iqr_ms": 2.486,
+          "peak_rss_mb": 318.25
+        }
+      },
+      "peak_rss_mb": 318.25,
+      "cpu_efficiency": 0.4808,
+      "elapsed_s": 28.4,
+      "speedup_by_sweep": {
+        "8": 0.9452,
+        "16": 0.9448,
+        "32": 0.8745,
+        "64": 0.913,
+        "128": 1.4172,
+        "256": 1.5278
+      },
+      "speedup": 1.0751
+    }
+  ]
+}
