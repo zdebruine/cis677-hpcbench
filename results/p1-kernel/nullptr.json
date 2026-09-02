@@ -1,0 +1,96 @@
+{
+  "task": "p1-kernel",
+  "tier": "cloud",
+  "input": "public",
+  "started_at": "2026-09-02T02:04:52.828104+00:00",
+  "commit": "",
+  "commit_short": "",
+  "host": {
+    "hostname": "vm",
+    "kernel": "6.18.44-fc-v22",
+    "machine": "x86_64",
+    "cpu_count": 2,
+    "cpu_model": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+    "cpu_flags_avx512": true,
+    "mem_total_gb": 7.8,
+    "tier": "cloud"
+  },
+  "status": "ok",
+  "checksum_ok": true,
+  "digests": {
+    "8": "f8498cfd3b1fcc5be5b38ae5f9065215cc1dbef70c13a5de84ca539199f67f32",
+    "16": "4e8b77108e0a0f37905d72d1704be594a860325d0b97193d915f4990ee4fa9fc",
+    "32": "7a29a11dd67873f5ebab92121bf4d552d1d2073c6691664a9d494ff384cbebb7",
+    "64": "1aadf408bd7ce52e6027c05da8f9b49651b5a0312a675194ca087c668f0f8b3b",
+    "128": "a8c4fbb71ef20fbf36c9c622d370cae94e1f388824a8f73034426485b2374cbd",
+    "256": "9842c5f3764a580e28d482ee9fab4f517a2a22750a97bd3cf8d49fef984cda88"
+  },
+  "metrics": {
+    "median_ms": 1173.661,
+    "total_ms": 7041.968,
+    "iqr_ms": 242.654,
+    "peak_rss_mb": 318.45,
+    "cpu_efficiency": 0.466,
+    "runs": 7,
+    "unstable": false,
+    "geomean_speedup": 1.401
+  },
+  "per_sweep": {
+    "8": {
+      "median_ms": 398.702,
+      "iqr_ms": 4.221,
+      "peak_rss_mb": 287.45,
+      "cpu_efficiency": 0.3066,
+      "counters": {},
+      "speedup": 1.033
+    },
+    "16": {
+      "median_ms": 453.61,
+      "iqr_ms": 10.517,
+      "peak_rss_mb": 288.44,
+      "cpu_efficiency": 0.3248,
+      "counters": {},
+      "speedup": 1.214
+    },
+    "32": {
+      "median_ms": 568.808,
+      "iqr_ms": 32.447,
+      "peak_rss_mb": 290.42,
+      "cpu_efficiency": 0.3583,
+      "counters": {},
+      "speedup": 1.319
+    },
+    "64": {
+      "median_ms": 806.247,
+      "iqr_ms": 19.407,
+      "peak_rss_mb": 294.43,
+      "cpu_efficiency": 0.3941,
+      "counters": {},
+      "speedup": 1.529
+    },
+    "128": {
+      "median_ms": 1351.071,
+      "iqr_ms": 35.717,
+      "peak_rss_mb": 302.44,
+      "cpu_efficiency": 0.4282,
+      "counters": {},
+      "speedup": 1.667
+    },
+    "256": {
+      "median_ms": 3463.53,
+      "iqr_ms": 242.654,
+      "peak_rss_mb": 318.45,
+      "cpu_efficiency": 0.466,
+      "counters": {},
+      "speedup": 1.792
+    }
+  },
+  "score": 6.15,
+  "log": "$ cmake -B build -DCMAKE_BUILD_TYPE=Release\n-- The CXX compiler identification is GNU 13.3.0\n-- Detecting CXX compiler ABI info\n-- Detecting CXX compiler ABI info - done\n-- Check for working CXX compiler: /usr/bin/c++ - skipped\n-- Detecting CXX compile features\n-- Detecting CXX compile features - done\n-- Found OpenMP_CXX: -fopenmp (found version \"4.5\") \n-- Found OpenMP: TRUE (found version \"4.5\")  \n-- Configuring done (0.6s)\n-- Generating done (0.0s)\n-- Build files have been written to: /tmp/v_dense_omp/build\n\n$ cmake --build build -j4\n[ 25%] Building CXX object CMakeFiles/prepare.dir/src/prepare.cpp.o\n[ 50%] Building CXX object CMakeFiles/solution.dir/src/solution.cpp.o\n[ 75%] Linking CXX executable prepare\n[100%] Linking CXX executable solution\n[100%] Built target prepare\n[100%] Built target solution\n\n$ [prepare, untimed] ./build/prepare /home/claude/hpcbench/data/p1-kernel/public.bin /tmp/v_dense_omp/work\nprepare: 2700 x 13714, 2282976 nonzeros (6.17% dense)\n\n$ [timed] ./build/solution /tmp/v_dense_omp/work result.bin 8\n\n$ [timed] ./build/solution /tmp/v_dense_omp/work result.bin 16\n\n$ [timed] ./build/solution /tmp/v_dense_omp/work result.bin 32\n\n$ [timed] ./build/solution /tmp/v_dense_omp/work result.bin 64\n\n$ [timed] ./build/solution /tmp/v_dense_omp/work result.bin 128\n\n$ [timed] ./build/solution /tmp/v_dense_omp/work result.bin 256\n\n",
+  "input_path": "/home/claude/hpcbench/data/p1-kernel/public.bin",
+  "prepare_s": 2.6,
+  "speedup": 1.401,
+  "elapsed_s": 76.7,
+  "handle": "nullptr",
+  "note": "dense, threaded (format unchanged)"
+}

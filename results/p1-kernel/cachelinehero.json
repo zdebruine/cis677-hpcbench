@@ -1,0 +1,96 @@
+{
+  "task": "p1-kernel",
+  "tier": "cloud",
+  "input": "public",
+  "started_at": "2026-09-02T02:04:30.035261+00:00",
+  "commit": "",
+  "commit_short": "",
+  "host": {
+    "hostname": "vm",
+    "kernel": "6.18.44-fc-v22",
+    "machine": "x86_64",
+    "cpu_count": 2,
+    "cpu_model": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+    "cpu_flags_avx512": true,
+    "mem_total_gb": 7.8,
+    "tier": "cloud"
+  },
+  "status": "ok",
+  "checksum_ok": true,
+  "digests": {
+    "8": "f8498cfd3b1fcc5be5b38ae5f9065215cc1dbef70c13a5de84ca539199f67f32",
+    "16": "4e8b77108e0a0f37905d72d1704be594a860325d0b97193d915f4990ee4fa9fc",
+    "32": "7a29a11dd67873f5ebab92121bf4d552d1d2073c6691664a9d494ff384cbebb7",
+    "64": "1aadf408bd7ce52e6027c05da8f9b49651b5a0312a675194ca087c668f0f8b3b",
+    "128": "a8c4fbb71ef20fbf36c9c622d370cae94e1f388824a8f73034426485b2374cbd",
+    "256": "9842c5f3764a580e28d482ee9fab4f517a2a22750a97bd3cf8d49fef984cda88"
+  },
+  "metrics": {
+    "median_ms": 106.049,
+    "total_ms": 636.294,
+    "iqr_ms": 17.672,
+    "peak_rss_mb": 53.56,
+    "cpu_efficiency": 0.4337,
+    "runs": 7,
+    "unstable": false,
+    "geomean_speedup": 14.616
+  },
+  "per_sweep": {
+    "8": {
+      "median_ms": 35.042,
+      "iqr_ms": 3.19,
+      "peak_rss_mb": 22.31,
+      "cpu_efficiency": 0.3043,
+      "counters": {},
+      "speedup": 11.757
+    },
+    "16": {
+      "median_ms": 41.053,
+      "iqr_ms": 0.696,
+      "peak_rss_mb": 23.32,
+      "cpu_efficiency": 0.3307,
+      "counters": {},
+      "speedup": 13.409
+    },
+    "32": {
+      "median_ms": 59.702,
+      "iqr_ms": 6.243,
+      "peak_rss_mb": 25.29,
+      "cpu_efficiency": 0.3619,
+      "counters": {},
+      "speedup": 12.57
+    },
+    "64": {
+      "median_ms": 89.51,
+      "iqr_ms": 1.563,
+      "peak_rss_mb": 29.36,
+      "cpu_efficiency": 0.394,
+      "counters": {},
+      "speedup": 13.771
+    },
+    "128": {
+      "median_ms": 149.803,
+      "iqr_ms": 8.557,
+      "peak_rss_mb": 37.31,
+      "cpu_efficiency": 0.416,
+      "counters": {},
+      "speedup": 15.033
+    },
+    "256": {
+      "median_ms": 261.184,
+      "iqr_ms": 17.672,
+      "peak_rss_mb": 53.56,
+      "cpu_efficiency": 0.4337,
+      "counters": {},
+      "speedup": 23.762
+    }
+  },
+  "score": 25.0,
+  "log": "$ cmake -B build -DCMAKE_BUILD_TYPE=Release\n-- Configuring done (0.0s)\n-- Generating done (0.0s)\n-- Build files have been written to: /tmp/p1good/build\n\n$ cmake --build build -j4\n[ 50%] Built target prepare\n[100%] Built target solution\n\n$ [prepare, untimed] ./build/prepare /home/claude/hpcbench/data/p1-kernel/public.bin /tmp/p1good/work\nprepare: CSR 2282976 nnz, 18.3 MB (dense was 296.2 MB)\n\n$ [timed] ./build/solution /tmp/p1good/work result.bin 8\n\n$ [timed] ./build/solution /tmp/p1good/work result.bin 16\n\n$ [timed] ./build/solution /tmp/p1good/work result.bin 32\n\n$ [timed] ./build/solution /tmp/p1good/work result.bin 64\n\n$ [timed] ./build/solution /tmp/p1good/work result.bin 128\n\n$ [timed] ./build/solution /tmp/p1good/work result.bin 256\n\n",
+  "input_path": "/home/claude/hpcbench/data/p1-kernel/public.bin",
+  "prepare_s": 0.7,
+  "speedup": 14.616,
+  "elapsed_s": 8.2,
+  "handle": "cachelinehero",
+  "note": "CSR + int32 idx + fp32 vals + dynamic OMP"
+}

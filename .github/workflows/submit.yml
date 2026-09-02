@@ -1,0 +1,83 @@
+# Student-side CI. Lives in each student's submission repo.
+# Gives a 2-minute correctness answer and a PROVISIONAL timing.
+# The number that counts comes from the nightly Clipper run, not from here.
+name: check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch the grader and the public input
+        env:
+          GRADER_TOKEN: ${{ secrets.GRADER_TOKEN }}
+        run: |
+          git clone --depth 1 \
+            "https://x-access-token:${GRADER_TOKEN}@github.com/${{ vars.GRADER_REPO }}.git" \
+            /tmp/grader
+          # Public input only. The held-out input is never exposed to a
+          # student-triggered workflow.
+          test -f /tmp/grader/data/${{ vars.TASK_ID }}/public.bin
+
+      - name: Toolchain
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ libomp-dev python3
+
+      - name: Evaluate
+        id: eval
+        env:
+          HPCBENCH_TIER: cloud
+          HPCBENCH_HANDLE: ${{ vars.HANDLE }}
+        run: |
+          cd /tmp/grader
+          python3 -m hpcbench.run \
+            --task tasks/${{ vars.TASK_ID }}/task.yaml \
+            --submission "$GITHUB_WORKSPACE" \
+            --input-path data/${{ vars.TASK_ID }}/public.bin \
+            --input public \
+            --tier cloud \
+            --handle "${{ vars.HANDLE }}" \
+            --out "$GITHUB_WORKSPACE/result.json" \
+            > /dev/null
+
+      - name: Summary
+        if: always()
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os
+          try:
+              r = json.load(open("result.json"))
+          except Exception:
+              print("## Evaluation did not produce a result\n"); raise SystemExit
+          ok = r["status"] == "ok"
+          print(f"## {'PASS' if ok else 'FAIL'} — {r['status']}\n")
+          if r.get("error"):
+              print(f"```\n{r['error']}\n```\n")
+          if r.get("checksum_ok"):
+              print(f"**Checksum matches the reference.** `{r['digest'][:24]}...`\n")
+          m = r.get("metrics") or {}
+          if m:
+              print("| metric | value |\n|---|---|")
+              for k in ("median_ms","iqr_ms","peak_rss_mb","cpu_efficiency"):
+                  if k in m: print(f"| {k} | {m[k]} |")
+              print()
+          print("> This is a **provisional** timing on a GitHub runner. It is not")
+          print("> the same hardware as Clipper and does not appear on the")
+          print("> leaderboard. The official score comes from the nightly run.")
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: result
+          path: result.json

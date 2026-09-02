@@ -1,0 +1,16 @@
+{
+  "_comment": [
+    "Devices whose runs count toward the official cross-device score.",
+    "Every device that submits a bundle still appears on the plot and in the",
+    "per-device table; only the ones listed here enter the combined figure.",
+    "This is deliberately a manual allowlist: a run from a thermally throttled",
+    "laptop on battery is real data about that laptop and useless as a grade.",
+    "Device ids come from the bundle's device.id, printed when a run finishes."
+  ],
+  "scoring_devices": [
+    "0432616b5d03"
+  ],
+  "labels": {
+    "0432616b5d03": "CIS 677 cloud sandbox (reference)"
+  }
+}

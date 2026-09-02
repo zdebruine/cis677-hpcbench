@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+_site/
+build/
+work/
+*.sif
+
+# Raw corpora are regenerated from the packed matrices; keep them out of git.
+data/*/public.bin
+data/*/holdout.bin
+data/*/*.bin
+!data/*/*.npz

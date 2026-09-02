@@ -1,0 +1,96 @@
+{
+  "task": "p1-kernel",
+  "tier": "cloud",
+  "input": "public",
+  "started_at": "2026-09-02T02:06:09.512517+00:00",
+  "commit": "",
+  "commit_short": "",
+  "host": {
+    "hostname": "vm",
+    "kernel": "6.18.44-fc-v22",
+    "machine": "x86_64",
+    "cpu_count": 2,
+    "cpu_model": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+    "cpu_flags_avx512": true,
+    "mem_total_gb": 7.8,
+    "tier": "cloud"
+  },
+  "status": "ok",
+  "checksum_ok": true,
+  "digests": {
+    "8": "f8498cfd3b1fcc5be5b38ae5f9065215cc1dbef70c13a5de84ca539199f67f32",
+    "16": "4e8b77108e0a0f37905d72d1704be594a860325d0b97193d915f4990ee4fa9fc",
+    "32": "7a29a11dd67873f5ebab92121bf4d552d1d2073c6691664a9d494ff384cbebb7",
+    "64": "1aadf408bd7ce52e6027c05da8f9b49651b5a0312a675194ca087c668f0f8b3b",
+    "128": "a8c4fbb71ef20fbf36c9c622d370cae94e1f388824a8f73034426485b2374cbd",
+    "256": "9842c5f3764a580e28d482ee9fab4f517a2a22750a97bd3cf8d49fef984cda88"
+  },
+  "metrics": {
+    "median_ms": 1903.895,
+    "total_ms": 11423.373,
+    "iqr_ms": 173.56,
+    "peak_rss_mb": 318.03,
+    "cpu_efficiency": 0.2499,
+    "runs": 7,
+    "unstable": false,
+    "geomean_speedup": 1.005
+  },
+  "per_sweep": {
+    "8": {
+      "median_ms": 400.727,
+      "iqr_ms": 16.526,
+      "peak_rss_mb": 286.91,
+      "cpu_efficiency": 0.2496,
+      "counters": {},
+      "speedup": 1.028
+    },
+    "16": {
+      "median_ms": 527.1,
+      "iqr_ms": 18.131,
+      "peak_rss_mb": 287.91,
+      "cpu_efficiency": 0.2497,
+      "counters": {},
+      "speedup": 1.044
+    },
+    "32": {
+      "median_ms": 805.234,
+      "iqr_ms": 45.927,
+      "peak_rss_mb": 289.91,
+      "cpu_efficiency": 0.2497,
+      "counters": {},
+      "speedup": 0.932
+    },
+    "64": {
+      "median_ms": 1205.82,
+      "iqr_ms": 27.681,
+      "peak_rss_mb": 293.91,
+      "cpu_efficiency": 0.2498,
+      "counters": {},
+      "speedup": 1.022
+    },
+    "128": {
+      "median_ms": 2220.735,
+      "iqr_ms": 64.018,
+      "peak_rss_mb": 302.03,
+      "cpu_efficiency": 0.2499,
+      "counters": {},
+      "speedup": 1.014
+    },
+    "256": {
+      "median_ms": 6263.757,
+      "iqr_ms": 173.56,
+      "peak_rss_mb": 318.03,
+      "cpu_efficiency": 0.2499,
+      "counters": {},
+      "speedup": 0.991
+    }
+  },
+  "score": 5.01,
+  "log": "$ cmake -B build -DCMAKE_BUILD_TYPE=Release\n-- Configuring done (0.0s)\n-- Generating done (0.0s)\n-- Build files have been written to: /tmp/p1ref_clean/build\n\n$ cmake --build build -j4\n[ 50%] Built target solution\n[100%] Built target prepare\n\n$ [prepare, untimed] ./build/prepare /home/claude/hpcbench/data/p1-kernel/public.bin /tmp/p1ref_clean/work\nprepare: 2700 x 13714, 2282976 nonzeros (6.17% dense)\n\n$ [timed] ./build/solution /tmp/p1ref_clean/work result.bin 8\n\n$ [timed] ./build/solution /tmp/p1ref_clean/work result.bin 16\n\n$ [timed] ./build/solution /tmp/p1ref_clean/work result.bin 32\n\n$ [timed] ./build/solution /tmp/p1ref_clean/work result.bin 64\n\n$ [timed] ./build/solution /tmp/p1ref_clean/work result.bin 128\n\n$ [timed] ./build/solution /tmp/p1ref_clean/work result.bin 256\n\n",
+  "input_path": "/home/claude/hpcbench/data/p1-kernel/public.bin",
+  "prepare_s": 0.4,
+  "speedup": 1.005,
+  "elapsed_s": 117.0,
+  "handle": "straightloop",
+  "note": "shipped baseline, unmodified"
+}

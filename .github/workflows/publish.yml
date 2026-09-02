@@ -1,0 +1,50 @@
+# Instructor-side. Lives in the grader repo.
+# Rebuilds the leaderboard whenever the nightly scorer commits new results.
+name: publish leaderboard
+
+on:
+  push:
+    branches: [main]
+    paths: ["results/**", "tasks/**", "hpcbench/**", "tools/build_site.sh",
+            ".github/workflows/publish.yml"]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * *"   # 07:00 ET, after the overnight Clipper run
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+
+      # One script, so a green local run means a green deploy.
+      # No dependencies to install: hpcbench is standard library only.
+      - name: Build the site
+        run: ./tools/build_site.sh _site
+
+      - name: Fail if nothing was produced
+        run: test -s _site/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

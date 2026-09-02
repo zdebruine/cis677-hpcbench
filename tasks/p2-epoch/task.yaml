@@ -1,0 +1,69 @@
+{
+  "id": "p2-epoch",
+  "title": "P2 - The Epoch",
+  "notes": "One epoch of autoencoder training: genes -> 256 -> 32 -> 256 -> genes, ReLU, Adam, MSE. The encoder's first layer is your P1 kernel. Architecture, hyperparameters, initialization and batch order are fixed - you are optimizing the implementation, not the model.",
+  "canon": {
+    "sig_digits": 6,
+    "exact": false
+  },
+  "build": [
+    "cmake -B build -DCMAKE_BUILD_TYPE=Release",
+    "cmake --build build -j4"
+  ],
+  "prepare": [
+    "./build/prepare {input} {work}"
+  ],
+  "entrypoint": [
+    "./build/solution"
+  ],
+  "workdir": "work",
+  "result_file": "result.bin",
+  "threads": 4,
+  "mem_limit_mb": 32768,
+  "timeout_s": 1800,
+  "sanity_timeout_s": 300,
+  "runs": 5,
+  "warmup": 1,
+  "public_input": "data/p2-epoch/public.bin",
+  "holdout_input": "data/p2-epoch/holdout.bin",
+  "reference_digest": {
+    "public": "1df501adf1ede523aeef645760262fd51a034c9a1ae7512124ceec6481cbf14c",
+    "holdout": "8252d234f2c7d34cd5e7c7cb73e7a513d25639bf3ae303e5cd0045aca88a593d"
+  },
+  "metrics": [
+    {
+      "key": "median_ms",
+      "label": "Epoch wall time",
+      "direction": "min",
+      "unit": "ms",
+      "primary": true,
+      "baseline": 2653.714,
+      "full_credit_at": 6.0,
+      "baseline_by_sweep": {}
+    },
+    {
+      "key": "peak_rss_mb",
+      "label": "Peak memory",
+      "direction": "min",
+      "unit": "MB"
+    },
+    {
+      "key": "cpu_efficiency",
+      "label": "CPU efficiency",
+      "direction": "max",
+      "unit": ""
+    },
+    {
+      "key": "cache_miss_rate",
+      "label": "Cache misses",
+      "direction": "min",
+      "unit": ""
+    },
+    {
+      "key": "ipc",
+      "label": "IPC",
+      "direction": "max",
+      "unit": ""
+    }
+  ]
+}

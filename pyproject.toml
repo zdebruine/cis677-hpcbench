@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hpcbench"
+version = "0.1.0"
+description = "Checksum-gated benchmark grading for CIS 677"
+requires-python = ">=3.9"
+dependencies = []          # stdlib only, on purpose: it must run on the cluster
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6"]
+
+[project.scripts]
+hpcbench-run = "hpcbench.run:main"
+hpcbench-reference = "hpcbench.reference:main"
+hpcbench-leaderboard = "hpcbench.leaderboard:main"
+hpcbench-index = "hpcbench.index:main"
+
+[tool.setuptools.packages.find]
+include = ["hpcbench*"]

@@ -1,0 +1,99 @@
+{
+  "id": "p1-kernel",
+  "title": "P1 - The Kernel",
+  "notes": "Y = X*W. X is pbmc3k as shipped by the singlet R package (singlet::get_pbmc3k_data) -- 2,700 cells x 13,714 genes of negative-binomial single-cell counts -- handed to you dense, 296 MB of fp64, of which 6.17% is nonzero. Scored across six operand widths, so a kernel tuned to one k wins nothing.",
+  "canon": {
+    "sig_digits": 9,
+    "exact": false
+  },
+  "build": [
+    "cmake -B build -DCMAKE_BUILD_TYPE=Release",
+    "cmake --build build -j4"
+  ],
+  "prepare": [
+    "./build/prepare {input} {work}"
+  ],
+  "entrypoint": [
+    "./build/solution"
+  ],
+  "workdir": "work",
+  "result_file": "result.bin",
+  "sweep_arg": "k",
+  "sweep_values": [
+    8,
+    16,
+    32,
+    64,
+    128,
+    256
+  ],
+  "threads": 4,
+  "mem_limit_mb": 32768,
+  "timeout_s": 900,
+  "sanity_timeout_s": 120,
+  "runs": 7,
+  "warmup": 2,
+  "public_input": "data/p1-kernel/public.bin",
+  "holdout_input": "data/p1-kernel/holdout.bin",
+  "reference_digest": {
+    "public": {
+      "8": "f8498cfd3b1fcc5be5b38ae5f9065215cc1dbef70c13a5de84ca539199f67f32",
+      "16": "4e8b77108e0a0f37905d72d1704be594a860325d0b97193d915f4990ee4fa9fc",
+      "32": "7a29a11dd67873f5ebab92121bf4d552d1d2073c6691664a9d494ff384cbebb7",
+      "64": "1aadf408bd7ce52e6027c05da8f9b49651b5a0312a675194ca087c668f0f8b3b",
+      "128": "a8c4fbb71ef20fbf36c9c622d370cae94e1f388824a8f73034426485b2374cbd",
+      "256": "9842c5f3764a580e28d482ee9fab4f517a2a22750a97bd3cf8d49fef984cda88"
+    },
+    "holdout": {
+      "8": "cbfaebe55d18cff5678451080e5bfe059a9dc8cffd722e8881103449ffafc97c",
+      "16": "ec00d8d29908ca3a431ae43b5133497a1261a9b07388d2d62b388b9ba51ca4c8",
+      "32": "887640afddc48640fe46f31e4bf19fcf8fbec48530f973bd3366a831ec9c280e",
+      "64": "aac7a949ff0d5e46e78eb9ce3ec1a4143a5db6113b40b52728ccb1f5bba90efb",
+      "128": "ca386e28d0a1df868dd1d4a8c4f86ec1a13da34e394b82b1f204c13b3f9a3d0f",
+      "256": "d3d2d793b47505ef1499a441e83f2d3b52aa84dbb6561d0e215981e8dc5cc9c0"
+    }
+  },
+  "metrics": [
+    {
+      "key": "geomean_speedup",
+      "label": "Speedup (geometric mean over k)",
+      "direction": "min",
+      "unit": "x",
+      "primary": true,
+      "baseline": 1900.617,
+      "baseline_by_sweep": {
+        "8": 411.978,
+        "16": 550.475,
+        "32": 750.472,
+        "64": 1232.621,
+        "128": 2251.963,
+        "256": 6206.191
+      },
+      "full_credit_at": 8.0
+    },
+    {
+      "key": "peak_rss_mb",
+      "label": "Peak memory",
+      "direction": "min",
+      "unit": "MB"
+    },
+    {
+      "key": "cpu_efficiency",
+      "label": "CPU efficiency",
+      "direction": "max",
+      "unit": ""
+    },
+    {
+      "key": "cache_miss_rate",
+      "label": "Cache misses",
+      "direction": "min",
+      "unit": ""
+    },
+    {
+      "key": "ipc",
+      "label": "IPC",
+      "direction": "max",
+      "unit": ""
+    }
+  ]
+}

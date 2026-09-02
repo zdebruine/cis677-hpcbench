@@ -1,0 +1,31 @@
+{
+  "id": "p5-atlas",
+  "title": "P5 - The Atlas",
+  "notes": "Capstone. Cold disk to trained model on a CELLxGENE corpus far larger than your allocation, with a Slurm job array for the sweep. Reuse your own P1-P4 or the provided reference for any stage. Queue wait is NOT counted - every submission gets identical resources.",
+
+  "canon": { "sig_digits": 3, "exact": false },
+
+  "build": ["cmake -B build -DCMAKE_BUILD_TYPE=Release", "cmake --build build -j8"],
+  "prepare":    ["./build/prepare {input} {work}"],
+  "entrypoint": ["./build/solution"],
+  "workdir": "work",
+  "result_file": "result.bin",
+
+  "threads": 8,
+  "mem_limit_mb": 131072,
+  "timeout_s": 21600,
+  "sanity_timeout_s": 7200,
+  "runs": 3,
+  "warmup": 1,
+
+  "public_input": "data/p5-atlas/public.bin",
+  "holdout_input": "data/p5-atlas/holdout.bin",
+  "reference_digest": {},
+
+  "metrics": [
+    { "key": "median_ms", "label": "End-to-end wall time", "direction": "min", "unit": "ms",
+      "primary": true, "baseline": null, "full_credit_at": 8.0 },
+    { "key": "peak_rss_mb",    "label": "Peak memory",    "direction": "min", "unit": "MB" },
+    { "key": "cpu_efficiency", "label": "CPU efficiency", "direction": "max", "unit": "" }
+  ]
+}

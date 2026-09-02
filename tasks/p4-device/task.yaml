@@ -1,0 +1,31 @@
+{
+  "id": "p4-device",
+  "title": "P4 - The Device",
+  "notes": "Port the epoch to an H100. The shipped baseline is the fixed 4-thread CPU reference; you are scored on speedup over it at 16x pbmc3k scale. A crossover plot (GPU and CPU epoch time against problem size, intersection identified) is a required deliverable and is assessed in the presentation, not by the harness.",
+
+  "canon": { "sig_digits": 3, "exact": false },
+
+  "build": ["cmake -B build -DCMAKE_BUILD_TYPE=Release", "cmake --build build -j8"],
+  "prepare":    ["./build/prepare {input} {work}"],
+  "entrypoint": ["./build/solution"],
+  "workdir": "work",
+  "result_file": "result.bin",
+
+  "threads": 8,
+  "mem_limit_mb": 131072,
+  "timeout_s": 3600,
+  "sanity_timeout_s": 900,
+  "runs": 5,
+  "warmup": 1,
+
+  "public_input": "data/p4-device/public.bin",
+  "holdout_input": "data/p4-device/holdout.bin",
+  "reference_digest": {},
+
+  "metrics": [
+    { "key": "median_ms", "label": "Epoch wall time", "direction": "min", "unit": "ms",
+      "primary": true, "baseline": null, "full_credit_at": 8.0 },
+    { "key": "peak_rss_mb",    "label": "Host memory",    "direction": "min", "unit": "MB" },
+    { "key": "cpu_efficiency", "label": "CPU efficiency", "direction": "max", "unit": "" }
+  ]
+}

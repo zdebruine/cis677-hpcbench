@@ -1,0 +1,57 @@
+{
+  "id": "p3-loader",
+  "title": "P3 - The Loader",
+  "notes": "One epoch on a corpus larger than memory, on laptop-class hardware. Cells must be visited in a mandated shuffled order - sequential reads are easy and wrong. Store the data on disk however you like; prepare is not timed.",
+  "canon": {
+    "sig_digits": 6,
+    "exact": false
+  },
+  "build": [
+    "cmake -B build -DCMAKE_BUILD_TYPE=Release",
+    "cmake --build build -j4"
+  ],
+  "prepare": [
+    "./build/prepare {input} {work}"
+  ],
+  "entrypoint": [
+    "./build/solution"
+  ],
+  "workdir": "work",
+  "result_file": "result.bin",
+  "threads": 4,
+  "mem_limit_mb": 16384,
+  "timeout_s": 3600,
+  "sanity_timeout_s": 600,
+  "runs": 5,
+  "warmup": 1,
+  "public_input": "data/p3-loader/public.bin",
+  "holdout_input": "data/p3-loader/holdout.bin",
+  "reference_digest": {
+    "public": "a7c2cb8ea8cd18674a4d224667df68d97a39b3dc0c5849ac54ea101029faab77",
+    "holdout": "c1c3dbbc0e65fbfffc5273c32d06221f96f6b11ee20849e1fcfde6afad92e503"
+  },
+  "metrics": [
+    {
+      "key": "median_ms",
+      "label": "Epoch wall time (cold cache)",
+      "direction": "min",
+      "unit": "ms",
+      "primary": true,
+      "baseline": 7868.03,
+      "full_credit_at": 6.0,
+      "baseline_by_sweep": {}
+    },
+    {
+      "key": "peak_rss_mb",
+      "label": "Peak memory",
+      "direction": "min",
+      "unit": "MB"
+    },
+    {
+      "key": "cpu_efficiency",
+      "label": "CPU efficiency",
+      "direction": "max",
+      "unit": ""
+    }
+  ]
+}
