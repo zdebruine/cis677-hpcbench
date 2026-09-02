@@ -32,9 +32,10 @@ A task may also declare `exact: true` for integer or index outputs (counts,
 permutations, sort orders, sparsity patterns), where bit-exactness is the
 correct requirement and quantization would be wrong.
 
-The same canonicalization is implemented in `harness/canon.hpp` so a C++
-submission can emit its own digest without a Python round-trip. The two
-implementations are checked against each other by `tests/test_canon_parity.py`.
+`harness/canon.hpp` does NOT canonicalize -- it only writes the raw result file
+in the wire format `digest_file` reads. The second canonicalizing implementation
+is `harness/canon.mjs`, used by the web platform's verify endpoint, and the two
+are checked against each other by `tests/test_canon_parity.py`.
 """
 
 from __future__ import annotations
@@ -47,9 +48,23 @@ from typing import Iterable, Sequence
 
 CANON_VERSION = 1  # bump if the wire format ever changes; invalidates old digests
 
+# 10**22 is the largest power of ten exactly representable as a float64. Beyond
+# that, 10.0**k is whatever the platform's libm rounds to, and Python's and
+# JavaScript's differ by an ulp -- which changes the quantized value, which
+# changes the digest, which fails a correct submission on one implementation and
+# passes it on the other. Refusing to quantize there turns a silent
+# cross-language disagreement into a loud, catchable error.
+MAX_EXACT_POW10 = 22
+
 
 class NonFiniteError(ValueError):
     """A result contained NaN or Inf. Never hashable, always a failure."""
+
+
+class OutOfDomainError(ValueError):
+    """A value's magnitude puts the scaling factor outside the range where
+    every implementation agrees. Widen sig_digits' scale or rescale the task's
+    output; do not quantize a number two implementations would round apart."""
 
 
 @dataclass(frozen=True)
@@ -79,8 +94,26 @@ def quantize(x: float, spec: CanonSpec) -> float:
     if x == 0.0 or abs(x) < spec.zero_floor:
         return 0.0  # collapses -0.0 and denormals
     exponent = math.floor(math.log10(abs(x)))
-    factor = 10.0 ** (spec.sig_digits - 1 - exponent)
-    q = round(x * factor) / factor
+    k = spec.sig_digits - 1 - exponent
+    if abs(k) > MAX_EXACT_POW10:
+        raise OutOfDomainError(
+            f"cannot canonicalize {x!r} at {spec.sig_digits} significant digits: "
+            f"the scaling factor 10**{k} is outside the exactly representable "
+            f"range (|k| <= {MAX_EXACT_POW10}), where implementations disagree"
+        )
+    # Only ever touch an EXACT power of ten. 10**0 .. 10**22 are exactly
+    # representable in float64; 10**-1 and friends are not, and two libm pow()
+    # implementations round them differently. So for k < 0 we divide by
+    # 10**(-k) rather than multiplying by the inexact 10**k.
+    #
+    # |x * 10**k| < 10**sig_digits <= 10**15 < 2**53, so round() below is exact.
+    # round() is half-to-even, which harness/canon.mjs mirrors deliberately.
+    if k >= 0:
+        factor = 10.0 ** k
+        q = round(x * factor) / factor
+    else:
+        inv = 10.0 ** (-k)
+        q = round(x / inv) * inv
     return 0.0 if q == 0.0 else q
 
 
