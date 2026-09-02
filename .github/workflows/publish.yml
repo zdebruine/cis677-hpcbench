@@ -5,8 +5,11 @@ name: publish leaderboard
 on:
   push:
     branches: [main]
-    paths: ["results/**", "tasks/**", "hpcbench/**", "tools/build_site.sh",
-            ".github/workflows/publish.yml"]
+    # scoring/** matters: it is the admin allowlist deciding which devices
+    # count. Leaving it out meant flipping a device on or off changed nothing
+    # on the site until some unrelated push happened to rebuild it.
+    paths: ["results/**", "tasks/**", "hpcbench/**", "scoring/**",
+            "tools/build_site.sh", ".github/workflows/publish.yml"]
   workflow_dispatch:
   schedule:
     - cron: "0 12 * * *"   # 07:00 ET, after the overnight Clipper run
