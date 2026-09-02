@@ -5,12 +5,18 @@
     "per-device table; only the ones listed here enter the combined figure.",
     "This is deliberately a manual allowlist: a run from a thermally throttled",
     "laptop on battery is real data about that laptop and useless as a grade.",
-    "Device ids come from the bundle's device.id, printed when a run finishes."
+    "Device ids come from the bundle's device.id, printed when a run finishes.",
+    "Empty on purpose right now. Both devices that have run so far are constrained",
+    "sandboxes measured with reduced repetition counts. They are real data about",
+    "those machines and they are not a grade. Add the Clipper scoring node's id",
+    "here once it has produced a full-repetition bundle on an exclusive node."
   ],
-  "scoring_devices": [
-    "0432616b5d03"
-  ],
+  "scoring_devices": [],
   "labels": {
     "0432616b5d03": "CIS 677 cloud sandbox (reference)"
+  },
+  "candidates": {
+    "0432616b5d03": "CIS 677 cloud sandbox, 2-core Xeon, --quick -- demonstration only",
+    "35aac794b443": "Zach laptop sandbox, 1 physical core, runs=2 -- demonstration only"
   }
 }
