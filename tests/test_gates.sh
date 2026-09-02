@@ -8,18 +8,56 @@ TMP=$(mktemp -d); trap "rm -rf $TMP" EXIT
 pass=0; fail=0
 
 check () { # name expected_status patcher
+  # `want` may be a |-separated set of acceptable statuses. The reordering case
+  # uses that: what it asserts is that a threaded, reformatted, float-valued
+  # rewrite still reproduces the reference digest. Whether the machine running
+  # the suite was quiet enough to also produce a scoreable timing is a fact
+  # about that machine, and on a contended 2-core box it legitimately comes
+  # back `unstable`. Failing the suite for that would train everyone to ignore
+  # a red test.
   local name="$1" want="$2" patch="$3"
   rm -rf "$TMP/s"; cp -r examples/p1-good "$TMP/s"; rm -rf "$TMP/s/build" "$TMP/s/work"
   ( cd "$TMP/s" && eval "$patch" )
   got=$(python3 -m hpcbench.run --task "$T" --submission "$TMP/s" \
         --input-path "$D/public.bin" --handle test --out "$TMP/r.json" --quiet 2>/dev/null \
         >/dev/null; python3 -c "import json;print(json.load(open('$TMP/r.json'))['status'])" 2>/dev/null || echo crash)
-  if [[ "$got" == "$want" ]]; then printf "  PASS  %-28s -> %s\n" "$name" "$got"; pass=$((pass+1))
+  local ok=1
+  case "|$want|" in (*"|$got|"*) ok=0 ;; esac
+  if [[ $ok -eq 0 ]]; then printf "  PASS  %-28s -> %s\n" "$name" "$got"; pass=$((pass+1))
   else printf "  FAIL  %-28s -> got '%s', wanted '%s'\n" "$name" "$got" "$want"; fail=$((fail+1)); fi
 }
 
+# A rewrite that changes the format, the value type and the summation order
+# must still hash identically. This is the one row in the table that must pass;
+# everything else is a break that must be caught.
+check_digest_matches () {
+  rm -rf "$TMP/s"; cp -r examples/p1-good "$TMP/s"; rm -rf "$TMP/s/build" "$TMP/s/work"
+  python3 - "$TMP/s" "$T" <<'PYEOF'
+import json, sys
+from hpcbench.run import evaluate
+from hpcbench.task import Task
+
+# allow_unstable: this asserts a numerical property, not a timing one. Letting
+# the noise guard abort the sweep would leave the later operand widths
+# unmeasured and report them as a digest mismatch, which is a lie about the
+# thing under test.
+task = Task.load(sys.argv[2])
+rec  = evaluate(sys.argv[1], task, input_path="data/p1-kernel/public.bin",
+                which_input="public", tier="test", allow_unstable=True)
+want = json.load(open(sys.argv[2]))["reference_digest"]["public"]
+got  = rec.get("digests", {})
+bad  = [k for k in want if got.get(k) != want[k]]
+label = "reordered sum hashes equal"
+if bad or not rec.get("checksum_ok"):
+    print(f"  FAIL  {label:<28} -> {rec['status']}, mismatch at {bad}")
+    sys.exit(1)
+print(f"  PASS  {label:<28} -> all {len(want)} digests match")
+PYEOF
+}
+
 echo "=== hpcbench gate tests (p1-kernel) ==="
-check "CSR + OpenMP rewrite"      ok           "true"
+check_digest_matches || fail=$((fail+1))
+check "CSR + OpenMP rewrite"      "ok|unstable" "true"
 check "1% wrong values"           wrong_answer "sed -i 's|y\[c\] += a \* w\[c\];|y[c] += a * w[c] * 1.01;|' src/solution.cpp"
 check "result one element short"  bad_result   "sed -i 's|hpcbench::write_result(argv\[2\], Y, {nc, k});|Y.resize(Y.size()-1); hpcbench::write_result(argv[2], Y, {nc, k});|' src/solution.cpp"
 check "NaN in result"             nonfinite    "sed -i 's|hpcbench::write_result(argv\[2\], Y, {nc, k});|Y[0] = 0.0/0.0; hpcbench::write_result(argv[2], Y, {nc, k});|' src/solution.cpp"
