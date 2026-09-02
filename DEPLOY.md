@@ -47,8 +47,11 @@ repos on the free tier are fine at this scale.
 GitHub Actions.
 
 **Template repo** — `gvsu-cis677/project-template`, marked *Template*. Contains
-the student-facing scaffold plus `.github/workflows/submit.yml`. One fork per
-student per project.
+the student-facing scaffold plus the workflow from
+`templates/project-repo/.github/workflows/submit.yml`. One fork per student per
+project. That workflow deliberately does **not** live under the grader repo's
+own `.github/workflows/`: GitHub runs everything it finds there, and the student
+workflow fails immediately without a `GRADER_TOKEN` secret.
 
 **Roster** — `roster.tsv` in the grader repo, tab-separated. This file is the
 only place handles map to repos; the name mapping stays off GitHub entirely.

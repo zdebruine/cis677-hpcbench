@@ -10,3 +10,7 @@ data/*/public.bin
 data/*/holdout.bin
 data/*/*.bin
 !data/*/*.npz
+
+# A committed result.bin is the stale-result attack the gate tests exist to
+# catch. It must never be in a repository.
+result.bin

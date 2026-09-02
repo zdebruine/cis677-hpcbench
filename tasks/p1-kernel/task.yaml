@@ -7,8 +7,7 @@
     "exact": false
   },
   "build": [
-    "cmake -B build -DCMAKE_BUILD_TYPE=Release",
-    "cmake --build build -j4"
+    "sh ./build.sh"
   ],
   "prepare": [
     "./build/prepare {input} {work}"
