@@ -79,7 +79,15 @@
         "128": 1.0,
         "256": 1.0
       },
-      "speedup": 1.0
+      "speedup": 1.0,
+      "digests": {
+        "8": "f8498cfd3b1fcc5be5b38ae5f9065215cc1dbef70c13a5de84ca539199f67f32",
+        "16": "4e8b77108e0a0f37905d72d1704be594a860325d0b97193d915f4990ee4fa9fc",
+        "32": "7a29a11dd67873f5ebab92121bf4d552d1d2073c6691664a9d494ff384cbebb7",
+        "64": "1aadf408bd7ce52e6027c05da8f9b49651b5a0312a675194ca087c668f0f8b3b",
+        "128": "a8c4fbb71ef20fbf36c9c622d370cae94e1f388824a8f73034426485b2374cbd",
+        "256": "9842c5f3764a580e28d482ee9fab4f517a2a22750a97bd3cf8d49fef984cda88"
+      }
     },
     {
       "handle": "bitshift",
@@ -130,7 +138,15 @@
         "128": 9.3712,
         "256": 13.5185
       },
-      "speedup": 11.682
+      "speedup": 11.682,
+      "digests": {
+        "8": "f8498cfd3b1fcc5be5b38ae5f9065215cc1dbef70c13a5de84ca539199f67f32",
+        "16": "4e8b77108e0a0f37905d72d1704be594a860325d0b97193d915f4990ee4fa9fc",
+        "32": "7a29a11dd67873f5ebab92121bf4d552d1d2073c6691664a9d494ff384cbebb7",
+        "64": "1aadf408bd7ce52e6027c05da8f9b49651b5a0312a675194ca087c668f0f8b3b",
+        "128": "a8c4fbb71ef20fbf36c9c622d370cae94e1f388824a8f73034426485b2374cbd",
+        "256": "9842c5f3764a580e28d482ee9fab4f517a2a22750a97bd3cf8d49fef984cda88"
+      }
     },
     {
       "handle": "cachelinehero",
@@ -181,7 +197,15 @@
         "128": 15.343,
         "256": 27.3114
       },
-      "speedup": 17.4145
+      "speedup": 17.4145,
+      "digests": {
+        "8": "f8498cfd3b1fcc5be5b38ae5f9065215cc1dbef70c13a5de84ca539199f67f32",
+        "16": "4e8b77108e0a0f37905d72d1704be594a860325d0b97193d915f4990ee4fa9fc",
+        "32": "7a29a11dd67873f5ebab92121bf4d552d1d2073c6691664a9d494ff384cbebb7",
+        "64": "1aadf408bd7ce52e6027c05da8f9b49651b5a0312a675194ca087c668f0f8b3b",
+        "128": "a8c4fbb71ef20fbf36c9c622d370cae94e1f388824a8f73034426485b2374cbd",
+        "256": "9842c5f3764a580e28d482ee9fab4f517a2a22750a97bd3cf8d49fef984cda88"
+      }
     },
     {
       "handle": "nullptr",
@@ -232,7 +256,15 @@
         "128": 1.6724,
         "256": 2.3026
       },
-      "speedup": 1.5373
+      "speedup": 1.5373,
+      "digests": {
+        "8": "f8498cfd3b1fcc5be5b38ae5f9065215cc1dbef70c13a5de84ca539199f67f32",
+        "16": "4e8b77108e0a0f37905d72d1704be594a860325d0b97193d915f4990ee4fa9fc",
+        "32": "7a29a11dd67873f5ebab92121bf4d552d1d2073c6691664a9d494ff384cbebb7",
+        "64": "1aadf408bd7ce52e6027c05da8f9b49651b5a0312a675194ca087c668f0f8b3b",
+        "128": "a8c4fbb71ef20fbf36c9c622d370cae94e1f388824a8f73034426485b2374cbd",
+        "256": "9842c5f3764a580e28d482ee9fab4f517a2a22750a97bd3cf8d49fef984cda88"
+      }
     }
   ],
   "owner": "zdebruine"

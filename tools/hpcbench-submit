@@ -116,13 +116,9 @@ if [ -z "${HPCBENCH_TOKEN:-}" ]; then
   exit 4
 fi
 
+# The on-disk bundle and the server's wire format are different shapes on
+# purpose; hpcbench.publish is the single place that translation lives. It also
+# sends a digest per sweep value so the server grades correctness itself rather
+# than believing a checksum this machine asserted about itself.
 echo "==> posting to $API/ingest"
-code=$(curl -sS -o /tmp/hpcbench-ingest.out -w '%{http_code}' \
-  -X POST "$API/ingest" \
-  -H "Authorization: Bearer $HPCBENCH_TOKEN" \
-  -H 'Content-Type: application/json' \
-  --data-binary @"$BUNDLE")
-echo "    HTTP $code"
-cat /tmp/hpcbench-ingest.out; echo
-[ "$code" = "200" ] || [ "$code" = "201" ] || exit 5
-echo "==> done. Your device is on the board."
+python3 -m hpcbench.publish --bundle "$BUNDLE" --api "$API"

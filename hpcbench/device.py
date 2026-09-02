@@ -192,6 +192,10 @@ def run_device(task: Task, subs: list[tuple[str, str]], *, input_path: str,
             "status": rec["status"],
             "error": rec.get("error"),
             "checksum_ok": rec.get("checksum_ok", False),
+            # Per-sweep digests travel with the bundle so the server can grade
+            # correctness itself. A client-asserted checksum_ok is worth nothing:
+            # the whole point of the oracle is that the grader decides.
+            "digests": dict(rec.get("digests", {})),
             "per_sweep": {k: {"median_ms": v["median_ms"], "iqr_ms": v["iqr_ms"],
                               "peak_rss_mb": v["peak_rss_mb"]}
                           for k, v in rec.get("per_sweep", {}).items()},
